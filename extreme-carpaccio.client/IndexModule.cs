@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace xCarpaccio.client
 {
@@ -25,46 +26,78 @@ namespace xCarpaccio.client
                 //TODO: do something with order and return a bill if possible
                 // If you manage to get the result, return a Bill object (JSON serialization is done automagically)
                 // Else return a HTTP 404 error : return Negotiate.WithStatusCode(HttpStatusCode.NotFound);
+                
+                decimal tot = 0;
 
-                Console.WriteLine(order.Country);
-                if (order.Country == "DE"){
-                    decimal tot = 0;
+                for (int i = 0; i < order.Prices.Length; i++)
+                {
+                    var price = order.Prices[i] * order.Quantities[i];
+                    tot += price;
+                }
 
-                    for (int i = 0; i < order.Prices.Length; i++){
-                        var price = order.Prices[i] * order.Quantities[i];
-                        price = price * 120 / 100;
-                        tot += price;
-                    }
+                decimal taxes = 0;
+                switch (order.Country)
+                {
+                    case "DE":
+                    case "FR":
+                    case "RO":
+                    case "NL":
+                    case "EL":
+                    case "LV":
+                    case "MT":
+                        taxes = 1.2m;
+                        break;
+                    case "UK":
+                    case "PL":
+                    case "BG":
+                    case "DK":
+                    case "IE":
+                    case "CY":
+                        taxes = 1.21m;
+                        break;
+                }
+
+                if (order.Country == "DE" || 
+                    order.Country == "FR" || 
+                    order.Country == "RO" || 
+                    order.Country == "NL" || 
+                    order.Country == "EL" || 
+                    order.Country == "LV" || 
+                    order.Country == "MT")
+                {
+
+                    tot = tot * 1.2m;
 
                     if (order.Reduction == "STANDARD")
                     {
                         if (tot >= 1000 && tot < 5000)
                         {
-                            tot = tot * 97 / 100;
+                            tot = tot * 0.97m;
                         }
                         if (tot >= 5000 && tot < 7000)
                         {
-                            tot = tot * 95 / 100;
+                            tot = tot * 0.95m;
                         }
                         if (tot >= 7000 && tot < 10000)
                         {
-                            tot = tot * 93 / 100;
+                            tot = tot * 0.93m;
                         }
                         if (tot >= 10000 && tot < 50000)
                         {
-                            tot = tot * 90 / 100;
+                            tot = tot * 0.90m;
                         }
                         if (tot >= 50000)
                         {
-                            tot = tot * 85 / 100;
+                            tot = tot * 0.85m;
                         }
                     }
-
+                    Console.WriteLine(tot);
+                    bill = new Bill();
                     bill.total = tot;
 
                 }
                 
-                    return bill;
+                return bill;
             };
 
             Post["/feedback"] = _ =>
