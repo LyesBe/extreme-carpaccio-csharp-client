@@ -38,6 +38,16 @@ namespace xCarpaccio.client
                 decimal taxes = 0;
                 switch (order.Country)
                 {
+                    case "FI":
+                        taxes = 1.17m;
+                        break;
+                    case "SK":
+                        taxes = 1.18m;
+                        break;
+                    case "ES":
+                    case "CZ":
+                        taxes = 1.19m;
+                        break;
                     case "DE":
                     case "FR":
                     case "RO":
@@ -55,18 +65,33 @@ namespace xCarpaccio.client
                     case "CY":
                         taxes = 1.21m;
                         break;
+                    case "AT":
+                    case "EE":
+                        taxes = 1.22m;
+                        break;
+                    case "LT":
+                    case "HR":
+                    case "SE":
+                    case "PT":
+                        taxes = 1.23m;
+                        break;
+                    case "BE":
+                    case "SI":
+                        taxes = 1.24m;
+                        break;
+                    case "LU":
+                    case "IT":
+                        taxes = 1.25m;
+                        break;
+                    case "HU":
+                        taxes = 1.27m;
+                        break;
                 }
 
-                if (order.Country == "DE" || 
-                    order.Country == "FR" || 
-                    order.Country == "RO" || 
-                    order.Country == "NL" || 
-                    order.Country == "EL" || 
-                    order.Country == "LV" || 
-                    order.Country == "MT")
+                if (taxes != 0)
                 {
 
-                    tot = tot * 1.2m;
+                    tot = tot * taxes;
 
                     if (order.Reduction == "STANDARD")
                     {
